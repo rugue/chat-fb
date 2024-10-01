@@ -1,37 +1,30 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
+import React from "react";
+import { Tabs } from "expo-router";
+import { Button } from "react-native";
+import { signOut } from "firebase/auth";
+import { FIREBASE_AUTH } from "@/config/FirebaseConfig";
 
-import { TabBarIcon } from '@/components/navigation/TabBarIcon';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
-
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
+const _layout = () => {
+  const doLogout = async () => {
+    try {
+      await signOut(FIREBASE_AUTH);
+      console.log("Logged out");
+    } catch (error) {
+      console.error("There was an error logging out", error);
+    }
+  };
 
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-      }}>
+    <Tabs>
       <Tabs.Screen
-        name="index"
+        name="groups"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'home' : 'home-outline'} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'code-slash' : 'code-slash-outline'} color={color} />
-          ),
+          headerTitle: "Chat Groups",
+          headerRight: () => <Button onPress={doLogout} title="Logout" />,
         }}
       />
     </Tabs>
   );
-}
+};
+
+export default _layout;
