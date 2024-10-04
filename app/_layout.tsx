@@ -1,19 +1,34 @@
-import React from "react";
-import { Stack } from "expo-router";
+import React, { useContext, useEffect } from "react";
+import { Slot, Stack, useRouter, useSegments } from "expo-router";
+import { AuthContext, AuthProvider } from "../context/AuthContext";
+import { Text } from "react-native";
 
-const StackLayout = () => {
-  return (
-    <Stack>
-      <Stack.Screen name="index" options={{ headerShown: false }} />
-      <Stack.Screen name="(auth)/login" options={{ headerShown: false }} />
-      <Stack.Screen
-        name="(auth)/register"
-        options={{ headerTitle: "Create Account" }}
-      />
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-    </Stack>
-  );
+const InitialLayout = () => {
+  const { user, initialized } = useContext(AuthContext);
+  const router = useRouter();
+  const segments = useSegments();
 
-  // return <Stack />;
+  useEffect(() => {
+    if (!initialized) return;
+
+    const inTabsGroup = segments[0] === "(tabs)";
+
+    if (user && !inTabsGroup) {
+      router.replace("/groups");
+    } else if (!user) {
+      router.replace("/login");
+    }
+  }, [user, initialized]);
+
+  return <>{initialized ? <Slot /> : <Text>Loading...</Text>}</>;
 };
-export default StackLayout;
+
+const RootLayout = () => {
+  return (
+    <AuthProvider>
+      <InitialLayout />
+    </AuthProvider>
+  );
+};
+
+export default RootLayout;

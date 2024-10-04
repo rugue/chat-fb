@@ -3,6 +3,7 @@ import { Link } from "expo-router";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
 import { View, TextInput, Button, Image, StyleSheet, Text } from "react-native";
+import Spinner from "react-native-loading-spinner-overlay";
 
 const LoginScreen = ({ navigation }: any) => {
   const [email, setEmail] = useState<string>("");
@@ -34,6 +35,7 @@ const LoginScreen = ({ navigation }: any) => {
 
   return (
     <View style={styles.container}>
+      <Spinner visible={loading} textContent={"Loading..."} />
       {/* Image above the input fields */}
       <Image
         source={{ uri: "https://via.placeholder.com/150" }} // Add your image URL here

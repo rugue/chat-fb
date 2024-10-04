@@ -11,22 +11,26 @@ import { onAuthStateChanged, User } from "firebase/auth";
 // }
 
 interface AuthContextProps {
-  currentUser?: User | null;
+  user?: User | null;
   initialized?: boolean;
 }
 
 export const AuthContext = createContext<AuthContextProps>({});
 
+export function useAuth() {
+  return React.useContext(AuthContext);
+}
+
 export const AuthProvider = ({ children }: any) => {
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [initialized, setInitialized] = useState<boolean>(false);
 
   useEffect(() => {
     console.log("AuthProvider");
 
-    onAuthStateChanged(FIREBASE_AUTH, (currentUser) => {
-      console.log("User AUTHENTICATED: ", currentUser && currentUser.email);
-      setCurrentUser(currentUser);
+    onAuthStateChanged(FIREBASE_AUTH, (user) => {
+      console.log("User AUTHENTICATED: ", user && user.email);
+      setUser(user);
       setInitialized(true);
     });
   }, []);
@@ -34,7 +38,7 @@ export const AuthProvider = ({ children }: any) => {
   // Cleanup subscription on unmount
   //   return () => unsubscribe();
   const value = {
-    currentUser,
+    user,
     initialized,
   };
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
