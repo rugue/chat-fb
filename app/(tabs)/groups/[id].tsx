@@ -32,7 +32,7 @@ const ChatPage = () => {
     const msgCollectionRef = collection(FIREBASE_DB, `groups/${id}/messages`);
     const q = query(msgCollectionRef, orderBy("createdAt", "asc"));
     const unsubscribe = onSnapshot(q, (groups: DocumentData) => {
-      const messages = groups.docs.map((doc) => {
+      const messages = groups.docs.map((doc: DocumentData) => {
         return { id: doc.id, ...doc.data() };
       });
       setMessages(messages);
@@ -42,7 +42,7 @@ const ChatPage = () => {
 
   const sendMessage = async () => {
     const msg = message.trim();
-    if (msg.length === 0) return;
+    if (msg.length === 0 || !user) return;
 
     const msgCollectionRef = collection(FIREBASE_DB, `groups/${id}/messages`);
 
@@ -56,7 +56,7 @@ const ChatPage = () => {
   };
 
   const renderMessage = ({ item }: { item: DocumentData }) => {
-    const myMessage = item.sender === user.uid;
+    const myMessage = user ? item.sender === user.uid : false;
 
     return (
       <View
